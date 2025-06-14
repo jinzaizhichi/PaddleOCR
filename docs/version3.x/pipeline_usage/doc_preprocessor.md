@@ -153,7 +153,7 @@ paddleocr doc_preprocessor -i ./doc_test_rotated.jpg --device gpu
 <tr>
 <td><code>input</code></td>
 <td>待预测数据，必填。
-如图像文件或者PDF文件的本地路径：<code>/root/data/img.jpg</code>；<b>如URL链接</b>，如图像文件或PDF文件的网络URL：<a href="https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/general_doc_preprocessor_002.png">示例</a>；<b>如本地目录</b>，该目录下需包含待预测图像，如本地路径：<code>/root/data/</code>(当前不支持目录中包含PDF文件的预测，PDF文件需要指定到具体文件路径)。
+如图像文件或者PDF文件的本地路径：<code>/root/data/img.jpg</code>；<b>如URL链接</b>，如图像文件或PDF文件的网络URL：<a href="https://paddle-model-ecology.bj.bcebos.com/paddlex/demo_image/doc_test_rotated.jpg">示例</a>；<b>如本地目录</b>，该目录下需包含待预测图像，如本地路径：<code>/root/data/</code>(当前不支持目录中包含PDF文件的预测，PDF文件需要指定到具体文件路径)。
 </td>
 <td><code>str</code></td>
 <td></td>
@@ -204,7 +204,7 @@ paddleocr doc_preprocessor -i ./doc_test_rotated.jpg --device gpu
 </tr>
 <tr>
 <td><code>device</code></td>
-<td>用于推理的设备。支持指定具体卡号。
+<td>用于推理的设备。支持指定具体卡号：
 <ul>
 <li><b>CPU</b>：如 <code>cpu</code> 表示使用 CPU 进行推理；</li>
 <li><b>GPU</b>：如 <code>gpu:0</code> 表示使用第 1 块 GPU 进行推理；</li>
@@ -225,15 +225,12 @@ paddleocr doc_preprocessor -i ./doc_test_rotated.jpg --device gpu
 </tr>
 <tr>
 <td><code>use_tensorrt</code></td>
-<td>是否使用 TensorRT 进行推理加速。</td>
+<td>是否启用 Paddle Inference 的 TensorRT 子图引擎。</br>
+对于 CUDA 11.8 版本的飞桨，兼容的 TensorRT 版本为 8.x（x>=6），建议安装 TensorRT 8.6.1.6。</br>
+对于 CUDA 12.6 版本的飞桨，兼容的 TensorRT 版本为 10.x（x>=5），建议安装 TensorRT 10.5.0.18。
+</td>
 <td><code>bool</code></td>
 <td><code>False</code></td>
-</tr>
-<tr>
-<td><code>min_subgraph_size</code></td>
-<td>最小子图大小，用于优化模型子图的计算。</td>
-<td><code>int</code></td>
-<td><code>3</code></td>
 </tr>
 <tr>
 <td><code>precision</code></td>
@@ -243,10 +240,18 @@ paddleocr doc_preprocessor -i ./doc_test_rotated.jpg --device gpu
 </tr>
 <tr>
 <td><code>enable_mkldnn</code></td>
-<td>是否启用 MKL-DNN 加速库。
+<td>是否启用 MKL-DNN 加速推理。如果 MKL-DNN 不可用或模型不支持通过 MKL-DNN 加速，即使设置了此标志，也不会使用加速。
 </td>
 <td><code>bool</code></td>
 <td><code>True</code></td>
+</tr>
+<tr>
+<td><code>mkldnn_cache_capacity</code></td>
+<td>
+MKL-DNN 缓存容量。
+</td>
+<td><code>int</code></td>
+<td><code>10</code></td>
 </tr>
 <tr>
 <td><code>cpu_threads</code></td>
@@ -348,7 +353,7 @@ for res in output:
 </tr>
 <tr>
 <td><code>device</code></td>
-<td>用于推理的设备。支持指定具体卡号。
+<td>用于推理的设备。支持指定具体卡号：
 <ul>
 <li><b>CPU</b>：如 <code>cpu</code> 表示使用 CPU 进行推理；</li>
 <li><b>GPU</b>：如 <code>gpu:0</code> 表示使用第 1 块 GPU 进行推理；</li>
@@ -370,15 +375,12 @@ for res in output:
 </tr>
 <tr>
 <td><code>use_tensorrt</code></td>
-<td>是否使用 TensorRT 进行推理加速。</td>
+<td>是否启用 Paddle Inference 的 TensorRT 子图引擎。</br>
+对于 CUDA 11.8 版本的飞桨，兼容的 TensorRT 版本为 8.x（x>=6），建议安装 TensorRT 8.6.1.6。</br>
+对于 CUDA 12.6 版本的飞桨，兼容的 TensorRT 版本为 10.x（x>=5），建议安装 TensorRT 10.5.0.18。
+</td>
 <td><code>bool</code></td>
 <td><code>False</code></td>
-</tr>
-<tr>
-<td><code>min_subgraph_size</code></td>
-<td>最小子图大小，用于优化模型子图的计算。</td>
-<td><code>int</code></td>
-<td><code>3</code></td>
 </tr>
 <tr>
 <td><code>precision</code></td>
@@ -388,10 +390,18 @@ for res in output:
 </tr>
 <tr>
 <td><code>enable_mkldnn</code></td>
-<td>是否启用 MKL-DNN 加速库。
+<td>是否启用 MKL-DNN 加速推理。如果 MKL-DNN 不可用或模型不支持通过 MKL-DNN 加速，即使设置了此标志，也不会使用加速。
 </td>
 <td><code>bool</code></td>
 <td><code>True</code></td>
+</tr>
+<tr>
+<td><code>mkldnn_cache_capacity</code></td>
+<td>
+MKL-DNN 缓存容量。
+</td>
+<td><code>int</code></td>
+<td><code>10</code></td>
 </tr>
 <tr>
 <td><code>cpu_threads</code></td>
@@ -428,7 +438,7 @@ for res in output:
 <td>待预测数据，支持多种输入类型，必填。
 <ul>
 <li><b>Python Var</b>：如 <code>numpy.ndarray</code> 表示的图像数据；</li>
-<li><b>str</b>：如图像文件或者PDF文件的本地路径：<code>/root/data/img.jpg</code>；<b>如URL链接</b>，如图像文件或PDF文件的网络URL：<a href="https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/general_doc_preprocessor_002.png">示例</a>；<b>如本地目录</b>，该目录下需包含待预测图像，如本地路径：<code>/root/data/</code>(当前不支持目录中包含PDF文件的预测，PDF文件需要指定到具体文件路径)；</li>
+<li><b>str</b>：如图像文件或者PDF文件的本地路径：<code>/root/data/img.jpg</code>；<b>如URL链接</b>，如图像文件或PDF文件的网络URL：<a href="https://paddle-model-ecology.bj.bcebos.com/paddlex/demo_image/doc_test_rotated.jpg">示例</a>；<b>如本地目录</b>，该目录下需包含待预测图像，如本地路径：<code>/root/data/</code>(当前不支持目录中包含PDF文件的预测，PDF文件需要指定到具体文件路径)；</li>
 <li><b>List</b>：列表元素需为上述类型数据，如<code>[numpy.ndarray, numpy.ndarray]</code>，<code>["/root/data/img1.jpg", "/root/data/img2.jpg"]</code>，<code>["/root/data1", "/root/data2"]</code>。</li>
 </ul>
 </td>
@@ -549,7 +559,7 @@ for res in output:
 </table>
 
 - `json` 属性获取的预测结果为dict类型的数据，相关内容与调用 `save_to_json()` 方法保存的内容一致。
-- `img` 属性返回的预测结果是一个字典类型的数据。其中，键为 `preprocessed_img`，对应的值是 `Image.Image` 对象：用于显示 doc_preprocessor 结果的可视化图像。
+- `img` 属性返回的预测结果是一个dict类型的数据。其中，键为 `preprocessed_img`，对应的值是 `Image.Image` 对象：用于显示 doc_preprocessor 结果的可视化图像。
 
 ## 3. 开发集成/部署
 

@@ -1041,7 +1041,7 @@ paddleocr table_recognition_v2 -i ./table_recognition_v2.jpg --device gpu
 </tr>
 <tr>
 <td><code>device</code></td>
-<td>用于推理的设备。支持指定具体卡号。
+<td>用于推理的设备。支持指定具体卡号：
 <ul>
 <li><b>CPU</b>：如 <code>cpu</code> 表示使用 CPU 进行推理；</li>
 <li><b>GPU</b>：如 <code>gpu:0</code> 表示使用第 1 块 GPU 进行推理；</li>
@@ -1062,15 +1062,12 @@ paddleocr table_recognition_v2 -i ./table_recognition_v2.jpg --device gpu
 </tr>
 <tr>
 <td><code>use_tensorrt</code></td>
-<td>是否使用 TensorRT 进行推理加速。</td>
+<td>是否启用 Paddle Inference 的 TensorRT 子图引擎。</br>
+对于 CUDA 11.8 版本的飞桨，兼容的 TensorRT 版本为 8.x（x>=6），建议安装 TensorRT 8.6.1.6。</br>
+对于 CUDA 12.6 版本的飞桨，兼容的 TensorRT 版本为 10.x（x>=5），建议安装 TensorRT 10.5.0.18。
+</td>
 <td><code>bool</code></td>
 <td><code>False</code></td>
-</tr>
-<tr>
-<td><code>min_subgraph_size</code></td>
-<td>最小子图大小，用于优化模型子图的计算。</td>
-<td><code>int</code></td>
-<td><code>3</code></td>
 </tr>
 <tr>
 <td><code>precision</code></td>
@@ -1080,10 +1077,18 @@ paddleocr table_recognition_v2 -i ./table_recognition_v2.jpg --device gpu
 </tr>
 <tr>
 <td><code>enable_mkldnn</code></td>
-<td>是否启用 MKL-DNN 加速库。
+<td>是否启用 MKL-DNN 加速推理。如果 MKL-DNN 不可用或模型不支持通过 MKL-DNN 加速，即使设置了此标志，也不会使用加速。
 </td>
 <td><code>bool</code></td>
 <td><code>True</code></td>
+</tr>
+<tr>
+<td><code>mkldnn_cache_capacity</code></td>
+<td>
+MKL-DNN 缓存容量。
+</td>
+<td><code>int</code></td>
+<td><code>10</code></td>
 </tr>
 <tr>
 <td><code>cpu_threads</code></td>
@@ -1393,7 +1398,7 @@ for res in output:
 </tr>
 <tr>
 <td><code>device</code></td>
-<td>用于推理的设备。支持指定具体卡号。
+<td>用于推理的设备。支持指定具体卡号：
 <ul>
 <li><b>CPU</b>：如 <code>cpu</code> 表示使用 CPU 进行推理；</li>
 <li><b>GPU</b>：如 <code>gpu:0</code> 表示使用第 1 块 GPU 进行推理；</li>
@@ -1415,15 +1420,12 @@ for res in output:
 </tr>
 <tr>
 <td><code>use_tensorrt</code></td>
-<td>是否使用 TensorRT 进行推理加速。</td>
+<td>是否启用 Paddle Inference 的 TensorRT 子图引擎。</br>
+对于 CUDA 11.8 版本的飞桨，兼容的 TensorRT 版本为 8.x（x>=6），建议安装 TensorRT 8.6.1.6。</br>
+对于 CUDA 12.6 版本的飞桨，兼容的 TensorRT 版本为 10.x（x>=5），建议安装 TensorRT 10.5.0.18。
+</td>
 <td><code>bool</code></td>
 <td><code>False</code></td>
-</tr>
-<tr>
-<td><code>min_subgraph_size</code></td>
-<td>最小子图大小，用于优化模型子图的计算。</td>
-<td><code>int</code></td>
-<td><code>3</code></td>
 </tr>
 <tr>
 <td><code>precision</code></td>
@@ -1433,10 +1435,18 @@ for res in output:
 </tr>
 <tr>
 <td><code>enable_mkldnn</code></td>
-<td>是否启用 MKL-DNN 加速库。
+<td>是否启用 MKL-DNN 加速推理。如果 MKL-DNN 不可用或模型不支持通过 MKL-DNN 加速，即使设置了此标志，也不会使用加速。
 </td>
 <td><code>bool</code></td>
 <td><code>True</code></td>
+</tr>
+<tr>
+<td><code>mkldnn_cache_capacity</code></td>
+<td>
+MKL-DNN 缓存容量。
+</td>
+<td><code>int</code></td>
+<td><code>10</code></td>
 </tr>
 <tr>
 <td><code>cpu_threads</code></td>
@@ -1554,7 +1564,7 @@ for res in output:
 </tr>
 <tr>
 <td><code>use_wired_table_cells_trans_to_html</code></td>
-<td>是否在推理时使用有线表单元格检测结果直转HTML模式,启用则直接基于有线表单元格检测结果的几何关系构建HTML。</td>
+<td>是否在推理时使用有线表单元格检测结果直转HTML模式，启用则直接基于有线表单元格检测结果的几何关系构建HTML。</td>
 <td><code>bool</code></td>
 <td><code>False</code></td>
 </tr>
@@ -1674,7 +1684,7 @@ for res in output:
         - `boxes`: `(List[Dict])` 版面印章区域的检测框列表，每个列表中的元素，包含以下字段
             - `cls_id`: `(int)` 检测框的印章类别id
             - `score`: `(float)` 检测框的置信度
-            - `coordinate`: `(List[float])` 检测框的四个顶点坐标，顺序为x1,y1,x2,y2表示左上角的x坐标，左上角的y坐标，右下角x坐标，右下角的y坐标
+            - `coordinate`: `(List[float])` 检测框的四个顶点坐标，顺序为x1，y1，x2，y2表示左上角的x坐标，左上角的y坐标，右下角x坐标，右下角的y坐标
     - `doc_preprocessor_res`: `(Dict[str, Union[str, Dict[str, bool], int]])` 文档预处理子产线的输出结果。仅当`use_doc_preprocessor=True`时存在
         - `input_path`: `(Union[str, None])` 图像预处理子产线接受的图像路径，当输入为`numpy.ndarray`时，保存为`None`
         - `model_settings`: `(Dict)` 预处理子产线的模型配置参数
@@ -1730,7 +1740,7 @@ for res in output:
 </table>
 
 - `json` 属性获取的预测结果为dict类型的数据，相关内容与调用 `save_to_json()` 方法保存的内容一致。
-- `img` 属性返回的预测结果是一个字典类型的数据。其中，键分别为 `table_res_img`、`ocr_res_img` 、`layout_res_img` 和 `preprocessed_img`，对应的值是四个 `Image.Image` 对象，按顺序分别为：表格识别结果的可视化图像、OCR 结果的可视化图像、版面区域检测结果的可视化图像、图像预处理的可视化图像。如果没有使用某个子模块，则字典中不包含对应的结果图像。
+- `img` 属性返回的预测结果是一个dict类型的数据。其中，键分别为 `table_res_img`、`ocr_res_img` 、`layout_res_img` 和 `preprocessed_img`，对应的值是四个 `Image.Image` 对象，按顺序分别为：表格识别结果的可视化图像、OCR 结果的可视化图像、版面区域检测结果的可视化图像、图像预处理的可视化图像。如果没有使用某个子模块，则dict中不包含对应的结果图像。
 
 ## 3. 开发集成/部署
 
@@ -2207,7 +2217,7 @@ paddleocr table_recognition_v2_pipeline --paddlex_config PaddleOCR.yaml ...
 
 4.在 Python API 中加载产线配置文件
 
-初始化产线对象时，可通过 paddlex_config 参数传入 PaddleX 产线配置文件路径或配置字典，PaddleOCR 会读取其中的内容作为产线配置。示例如下：
+初始化产线对象时，可通过 paddlex_config 参数传入 PaddleX 产线配置文件路径或配置dict，PaddleOCR 会读取其中的内容作为产线配置。示例如下：
 
 ```python
 from paddleocr import TableRecognitionPipelineV2

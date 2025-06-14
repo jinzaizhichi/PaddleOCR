@@ -14,7 +14,9 @@ Installation for CPU:
 python -m pip install paddlepaddle==3.0.0 -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
 ```
 
-Installation for GPU: Since GPU installation requires specific CUDA versions, the following example is for installing NVIDIA GPU on the Linux platform with CUDA 11.8. For other platforms, please refer to the instructions in the [PaddlePaddle official installation documentation](https://www.paddlepaddle.org.cn/install/quick).
+Installation for GPU: 
+
+Since GPU installation requires specific CUDA versions, the following example is for installing NVIDIA GPU on the Linux platform with CUDA 11.8. For other platforms, please refer to the instructions in the [PaddlePaddle official installation documentation](https://www.paddlepaddle.org.cn/install/quick).
 
 ```bash
 python -m pip install paddlepaddle-gpu==3.0.0 -i https://www.paddlepaddle.org.cn/packages/stable/cu118/
@@ -22,8 +24,8 @@ python -m pip install paddlepaddle-gpu==3.0.0 -i https://www.paddlepaddle.org.cn
 
 #### 2. Install `paddleocr`
 
-```bash
-pip install paddleocr==3.0.0
+```bash linenums="1"
+python -m pip install paddleocr
 ```
 
 ### Command Line Usage
@@ -66,11 +68,11 @@ pip install paddleocr==3.0.0
     # ocr = PaddleOCR(use_doc_orientation_classify=True, use_doc_unwarping=True) # text image preprocessing + text detection + textline orientation classification + text recognition
     # ocr = PaddleOCR(use_doc_orientation_classify=False, use_doc_unwarping=False) # text detection + textline orientation classification + text recognition
     # ocr = PaddleOCR(
-    #     text_detection_model_name="PP-OCRv5_server_det",
-    #     text_recognition_model_name="PP-OCRv5_server_rec",
+    #     text_detection_model_name="PP-OCRv5_mobile_det",
+    #     text_recognition_model_name="PP-OCRv5_mobile_rec",
     #     use_doc_orientation_classify=False,
     #     use_doc_unwarping=False,
-    #     use_textline_orientation=False) # Switch to PP-OCRv5_server models
+    #     use_textline_orientation=False) # Switch to PP-OCRv5_mobile models
     result = ocr.predict("./general_ocr_002.png")
     for res in result:
         res.print()

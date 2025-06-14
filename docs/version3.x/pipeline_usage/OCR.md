@@ -664,25 +664,25 @@ paddleocr ocr -i ./general_ocr_002.png --ocr_version PP-OCRv4
 </tr>
 <tr>
 <td><code>use_doc_orientation_classify</code></td>
-<td>是否加载并使用文档方向分类功能。如果不设置，将默认使用产线初始化的该参数值，初始化为<code>True</code>。</td>
+<td>是否加载并使用文档方向分类模块。如果不设置，将默认使用产线初始化的该参数值，初始化为<code>True</code>。</td>
 <td><code>bool</code></td>
 <td></td>
 </tr>
 <tr>
 <td><code>use_doc_unwarping</code></td>
-<td>是否加载并使用文本图像矫正功能。如果不设置，将默认使用产线初始化的该参数值，初始化为<code>True</code>。</td>
+<td>是否加载并使用文本图像矫正模块。如果不设置，将默认使用产线初始化的该参数值，初始化为<code>True</code>。</td>
 <td><code>bool</code></td>
 <td></td>
 </tr>
 <tr>
 <td><code>use_textline_orientation</code></td>
-<td>是否加载并使用文本行方向功能。如果不设置，将默认使用产线初始化的该参数值，初始化为<code>True</code>。</td>
+<td>是否加载并使用文本行方向模块。如果不设置，将默认使用产线初始化的该参数值，初始化为<code>True</code>。</td>
 <td><code>bool</code></td>
 <td></td>
 </tr>
 <tr>
 <td><code>text_det_limit_side_len</code></td>
-<td>文本检测的最大边长度限制。
+<td>文本检测的图像边长限制。
 大于 <code>0</code> 的任意整数。如果不设置，将默认使用产线初始化的该参数值，初始化为 <code>64</code>。
 </td>
 <td><code>int</code></td>
@@ -741,28 +741,20 @@ paddleocr ocr -i ./general_ocr_002.png --ocr_version PP-OCRv4
 <tr>
 <td><code>lang</code></td>
 <td>使用指定语言的 OCR 模型。
-<ul>
-<li><b>ch</b>：中文；
-<li><b>en</b>：英文；
-<li><b>korean</b>：韩文；
-<li><b>japan</b>：日文；
-<li><b>chinese_cht</b>：繁体中文；
-<li><b>te</b>：泰卢固文；
-<li><b>ka</b>：卡纳达文；
-<li><b>ta</b>：泰米尔文；
-</ul>如果不设置，将默认使用<code>ch</code>。
+附录中的表格中列举了全部支持的语言。
 </td>
 <td><code>str</code></td>
 <td></td>
 </tr>
 <tr>
 <td><code>ocr_version</code></td>
-<td>OCR 版本。
+<td>OCR 模型版本。
 <ul>
-<li><b>PP-OCRv5</b>：使用<code>PP-OCRv5</code>系列模型；
-<li><b>PP-OCRv4</b>：使用<code>PP-OCRv4</code>系列模型；
-<li><b>PP-OCRv3</b>：使用<code>PP-OCRv3</code>系列模型；
-</ul>如果不设置，将默认使用<code>PP-OCRv5</code>系列模型。
+<li><b>PP-OCRv5</b>：使用PP-OCRv5系列模型；
+<li><b>PP-OCRv4</b>：使用PP-OCRv4系列模型；
+<li><b>PP-OCRv3</b>：使用PP-OCRv3系列模型。
+</ul>
+注意不是每个<code>ocr_version</code>都支持所有的<code>lang</code>，请查看附录中的对应关系表。
 </td>
 <td><code>str</code></td>
 <td></td>
@@ -839,7 +831,7 @@ paddleocr ocr -i ./general_ocr_002.png --ocr_version PP-OCRv4
 </tr>
 <tr>
 <td><code>device</code></td>
-<td>用于推理的设备。支持指定具体卡号。
+<td>用于推理的设备。支持指定具体卡号：
 <ul>
 <li><b>CPU</b>：如 <code>cpu</code> 表示使用 CPU 进行推理；</li>
 <li><b>GPU</b>：如 <code>gpu:0</code> 表示使用第 1 块 GPU 进行推理；</li>
@@ -860,15 +852,12 @@ paddleocr ocr -i ./general_ocr_002.png --ocr_version PP-OCRv4
 </tr>
 <tr>
 <td><code>use_tensorrt</code></td>
-<td>是否使用 TensorRT 进行推理加速。</td>
+<td>是否启用 Paddle Inference 的 TensorRT 子图引擎。</br>
+对于 CUDA 11.8 版本的飞桨，兼容的 TensorRT 版本为 8.x（x>=6），建议安装 TensorRT 8.6.1.6。</br>
+对于 CUDA 12.6 版本的飞桨，兼容的 TensorRT 版本为 10.x（x>=5），建议安装 TensorRT 10.5.0.18。
+</td>
 <td><code>bool</code></td>
 <td><code>False</code></td>
-</tr>
-<tr>
-<td><code>min_subgraph_size</code></td>
-<td>最小子图大小，用于优化模型子图的计算。</td>
-<td><code>int</code></td>
-<td><code>3</code></td>
 </tr>
 <tr>
 <td><code>precision</code></td>
@@ -878,10 +867,18 @@ paddleocr ocr -i ./general_ocr_002.png --ocr_version PP-OCRv4
 </tr>
 <tr>
 <td><code>enable_mkldnn</code></td>
-<td>是否启用 MKL-DNN 加速库。
+<td>是否启用 MKL-DNN 加速推理。如果 MKL-DNN 不可用或模型不支持通过 MKL-DNN 加速，即使设置了此标志，也不会使用加速。
 </td>
 <td><code>bool</code></td>
 <td><code>True</code></td>
+</tr>
+<tr>
+<td><code>mkldnn_cache_capacity</code></td>
+<td>
+MKL-DNN 缓存容量。
+</td>
+<td><code>int</code></td>
+<td><code>10</code></td>
 </tr>
 <tr>
 <td><code>cpu_threads</code></td>
@@ -927,6 +924,7 @@ paddleocr ocr -i ./general_ocr_002.png --ocr_version PP-OCRv4
 若指定了`save_path`，则会保存可视化结果在`save_path`下。可视化结果如下：
 
 <img src="https://raw.githubusercontent.com/cuicheng01/PaddleX_doc_images/main/images/pipelines/ocr/03.png"/>
+
 
 ### 2.2 Python脚本方式集成
 
@@ -1045,28 +1043,28 @@ for res in result:
 </tr>
 <tr>
 <td><code>use_doc_orientation_classify</code></td>
-<td>是否加载并使用文档方向分类功能。如果设置为<code>None</code>，将默认使用产线初始化的该参数值，初始化为<code>True</code>。</td>
+<td>是否加载并使用文档方向分类模块。如果设置为<code>None</code>，将默认使用产线初始化的该参数值，初始化为<code>True</code>。</td>
 <td><code>bool</code></td>
 <td><code>None</code></td>
 </tr>
 <tr>
 <td><code>use_doc_unwarping</code></td>
-<td>是否加载并使用文本图像矫正功能。如果设置为<code>None</code>，将默认使用产线初始化的该参数值，初始化为<code>True</code>。</td>
+<td>是否加载并使用文本图像矫正模块。如果设置为<code>None</code>，将默认使用产线初始化的该参数值，初始化为<code>True</code>。</td>
 <td><code>bool</code></td>
 <td><code>None</code></td>
 </tr>
 <tr>
 <td><code>use_textline_orientation</code></td>
-<td>是否加载并使用文本行方向功能。如果设置为<code>None</code>，将默认使用产线初始化的该参数值，初始化为<code>True</code>。</td>
+<td>是否加载并使用文本行方向模块。如果设置为<code>None</code>，将默认使用产线初始化的该参数值，初始化为<code>True</code>。</td>
 <td><code>bool</code></td>
 <td><code>None</code></td>
 </tr>
 <tr>
 <td><code>text_det_limit_side_len</code></td>
-<td>文本检测的最大边长度限制。
+<td>文本检测的图像边长限制。
 <ul>
 <li><b>int</b>：大于 <code>0</code> 的任意整数；</li>
-<li><b>None</b>：如果设置为<code>None</code>， 将默认使用产线初始化的该参数值，初始化为 <code>64</code>。</li>
+<li><b>None</b>：如果设置为<code>None</code>，将默认使用产线初始化的该参数值，初始化为 <code>64</code>。</li>
 </ur>
 </td>
 <td><code>int</code></td>
@@ -1077,7 +1075,7 @@ for res in result:
 <td>文本检测的边长度限制类型。
 <ul>
 <li><b>str</b>：支持 <code>min</code> 和 <code>max</code>，<code>min</code> 表示保证图像最短边不小于 <code>det_limit_side_len</code>，<code>max</code> 表示保证图像最长边不大于 <code>limit_side_len</code>；</li>
-<li><b>None</b>：如果设置为<code>None</code>， 将默认使用产线初始化的该参数值，初始化为 <code>min</code>。</li>
+<li><b>None</b>：如果设置为<code>None</code>，将默认使用产线初始化的该参数值，初始化为 <code>min</code>。</li>
 </ur>
 </td>
 <td><code>str</code></td>
@@ -1088,7 +1086,7 @@ for res in result:
 <td>文本检测像素阈值，输出的概率图中，得分大于该阈值的像素点才会被认为是文字像素点。
 <ul>
 <li><b>float</b>：大于<code>0</code>的任意浮点数；
-<li><b>None</b>：如果设置为<code>None</code>， 将默认使用产线初始化的该参数值 <code>0.3</code>。</li>
+<li><b>None</b>：如果设置为<code>None</code>，将默认使用产线初始化的该参数值 <code>0.3</code>。</li>
 </td>
 <td><code>float</code></td>
 <td><code>None</code></td>
@@ -1098,7 +1096,7 @@ for res in result:
 <td>文本检测框阈值，检测结果边框内，所有像素点的平均得分大于该阈值时，该结果会被认为是文字区域。
 <ul>
 <li><b>float</b>：大于<code>0</code>的任意浮点数；
-<li><b>None</b>：如果设置为<code>None</code>将默认使用产线初始化的该参数值 <code>0.6</code>。
+<li><b>None</b>：如果设置为<code>None</code>，将默认使用产线初始化的该参数值 <code>0.6</code>。
 </td>
 <td><code>float</code></td>
 <td><code>None</code></td>
@@ -1140,37 +1138,27 @@ for res in result:
 <tr>
 <td><code>lang</code></td>
 <td>使用指定语言的 OCR 模型。
-<ul>
-<li><b>ch</b>：中文；
-<li><b>en</b>：英文；
-<li><b>korean</b>：韩文；
-<li><b>japan</b>：日文；
-<li><b>chinese_cht</b>：繁体中文；
-<li><b>te</b>：泰卢固文；
-<li><b>ka</b>：卡纳达文；
-<li><b>ta</b>：泰米尔文；
-<li><b>None</b>：如果设置为<code>None</code>，将默认使用<code>ch</code>。
-</ur>
+附录中的表格中列举了全部支持的语言。
 </td>
 <td><code>str</code></td>
 <td><code>None</code></td>
 </tr>
 <tr>
 <td><code>ocr_version</code></td>
-<td>OCR 版本。
+<td>OCR 模型版本。
 <ul>
-<li><b>PP-OCRv5</b>：使用<code>PP-OCRv5</code>系列模型；
-<li><b>PP-OCRv4</b>：使用<code>PP-OCRv4</code>系列模型；
-<li><b>PP-OCRv3</b>：使用<code>PP-OCRv3</code>系列模型；
-<li><b>None</b>：如果设置为<code>None</code>， 将默认使用<code>PP-OCRv5</code>系列模型。
-</ur>
+<li><b>PP-OCRv5</b>：使用PP-OCRv5系列模型；
+<li><b>PP-OCRv4</b>：使用PP-OCRv4系列模型；
+<li><b>PP-OCRv3</b>：使用PP-OCRv3系列模型。
+</ul>
+注意不是每个<code>ocr_version</code>都支持所有的<code>lang</code>，请查看附录中的对应关系表。
 </td>
 <td><code>str</code></td>
 <td><code>None</code></td>
 </tr>
 <tr>
 <td><code>device</code></td>
-<td>用于推理的设备。支持指定具体卡号。
+<td>用于推理的设备。支持指定具体卡号：
 <ul>
 <li><b>CPU</b>：如 <code>cpu</code> 表示使用 CPU 进行推理；</li>
 <li><b>GPU</b>：如 <code>gpu:0</code> 表示使用第 1 块 GPU 进行推理；</li>
@@ -1192,15 +1180,12 @@ for res in result:
 </tr>
 <tr>
 <td><code>use_tensorrt</code></td>
-<td>是否使用 TensorRT 进行推理加速。</td>
+<td>是否启用 Paddle Inference 的 TensorRT 子图引擎。</br>
+对于 CUDA 11.8 版本的飞桨，兼容的 TensorRT 版本为 8.x（x>=6），建议安装 TensorRT 8.6.1.6。</br>
+对于 CUDA 12.6 版本的飞桨，兼容的 TensorRT 版本为 10.x（x>=5），建议安装 TensorRT 10.5.0.18。
+</td>
 <td><code>bool</code></td>
 <td><code>False</code></td>
-</tr>
-<tr>
-<td><code>min_subgraph_size</code></td>
-<td>最小子图大小，用于优化模型子图的计算。</td>
-<td><code>int</code></td>
-<td><code>3</code></td>
 </tr>
 <tr>
 <td><code>precision</code></td>
@@ -1210,9 +1195,17 @@ for res in result:
 </tr>
 <tr>
 <td><code>enable_mkldnn</code></td>
-<td>是否启用 MKL-DNN 加速库。
+<td>是否启用 MKL-DNN 加速推理。如果 MKL-DNN 不可用或模型不支持通过 MKL-DNN 加速，即使设置了此标志，也不会使用加速。
 <td><code>bool</code></td>
 <td><code>True</code></td>
+</tr>
+<tr>
+<td><code>mkldnn_cache_capacity</code></td>
+<td>
+MKL-DNN 缓存容量。
+</td>
+<td><code>int</code></td>
+<td><code>10</code></td>
 </tr>
 <tr>
 <td><code>cpu_threads</code></td>
@@ -1373,7 +1366,7 @@ for res in result:
       <li><code>model_settings</code>: <code>(Dict[str, bool])</code> 配置产线所需的模型参数
         <ul>
           <li><code>use_doc_preprocessor</code>: <code>(bool)</code> 控制是否启用文档预处理子产线</li>
-          <li><code>use_textline_orientation</code>: <code>(bool)</code> 控制是否启用文本行方向分类功能</li>
+          <li><code>use_textline_orientation</code>: <code>(bool)</code> 控制是否启用文本行方向分类模块</li>
         </ul>
       </li>
       <li><code>doc_preprocessor_res</code>: <code>(Dict[str, Union[str, Dict[str, bool], int]])</code> 文档预处理子产线的输出结果。仅当<code>use_doc_preprocessor=True</code>时存在
@@ -1433,7 +1426,7 @@ for res in result:
 
 <ul>
   <li><code>json</code> 属性获取的预测结果为dict类型的数据，相关内容与调用 <code>save_to_json()</code> 方法保存的内容一致。</li>
-  <li><code>img</code> 属性返回的预测结果是一个字典类型的数据。其中，键分别为 <code>ocr_res_img</code> 和 <code>preprocessed_img</code>，对应的值是两个 <code>Image.Image</code> 对象：一个用于显示 OCR 结果的可视化图像，另一个用于展示图像预处理的可视化图像。如果没有使用图像预处理子模块，则字典中只包含 <code>ocr_res_img</code>。</li>
+  <li><code>img</code> 属性返回的预测结果是一个dict类型的数据。其中，键分别为 <code>ocr_res_img</code> 和 <code>preprocessed_img</code>，对应的值是两个 <code>Image.Image</code> 对象：一个用于显示 OCR 结果的可视化图像，另一个用于展示图像预处理的可视化图像。如果没有使用图像预处理子模块，则dict中只包含 <code>ocr_res_img</code>。</li>
 </ul>
 
 </details>
@@ -1834,10 +1827,146 @@ paddleocr ocr --paddlex_config PaddleOCR.yaml ...
 
 4.在 Python API 中加载产线配置文件
 
-初始化产线对象时，可通过 paddlex_config 参数传入 PaddleX 产线配置文件路径或配置字典，PaddleOCR 会读取其中的内容作为产线配置。示例如下：
+初始化产线对象时，可通过 paddlex_config 参数传入 PaddleX 产线配置文件路径或配置dict，PaddleOCR 会读取其中的内容作为产线配置。示例如下：
 
 ```python
 from paddleocr import PaddleOCR
 
 pipeline = PaddleOCR(paddlex_config="PaddleOCR.yaml")
 ```
+
+## 5. 附录
+
+<details><summary><b>Supported Languages</b></summary>
+
+<table border="1" cellspacing="0" cellpadding="4">
+  <thead>
+    <tr>
+      <th><code>lang</code></th>
+      <th>Language Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>abq</code></td><td>Abaza</td></tr>
+    <tr><td><code>af</code></td><td>Afrikaans</td></tr>
+    <tr><td><code>ang</code></td><td>Old English</td></tr>
+    <tr><td><code>ar</code></td><td>Arabic</td></tr>
+    <tr><td><code>ava</code></td><td>Avaric</td></tr>
+    <tr><td><code>az</code></td><td>Azerbaijani</td></tr>
+    <tr><td><code>be</code></td><td>Belarusian</td></tr>
+    <tr><td><code>bg</code></td><td>Bulgarian</td></tr>
+    <tr><td><code>bgc</code></td><td>Haryanvi</td></tr>
+    <tr><td><code>bh</code></td><td>Bihari</td></tr>
+    <tr><td><code>bho</code></td><td>Bhojpuri</td></tr>
+    <tr><td><code>bs</code></td><td>Bosnian</td></tr>
+    <tr><td><code>ch</code></td><td>Chinese (Simplified)</td></tr>
+    <tr><td><code>che</code></td><td>Chechen</td></tr>
+    <tr><td><code>chinese_cht</code></td><td>Chinese (Traditional)</td></tr>
+    <tr><td><code>cs</code></td><td>Czech</td></tr>
+    <tr><td><code>cy</code></td><td>Welsh</td></tr>
+    <tr><td><code>da</code></td><td>Danish</td></tr>
+    <tr><td><code>dar</code></td><td>Dargwa</td></tr>
+    <tr><td><code>de</code> or <code>german</code></td><td>German</td></tr>
+    <tr><td><code>en</code></td><td>English</td></tr>
+    <tr><td><code>es</code></td><td>Spanish</td></tr>
+    <tr><td><code>et</code></td><td>Estonian</td></tr>
+    <tr><td><code>fa</code></td><td>Persian</td></tr>
+    <tr><td><code>fr</code> or <code>french</code></td><td>French</td></tr>
+    <tr><td><code>ga</code></td><td>Irish</td></tr>
+    <tr><td><code>gom</code></td><td>Konkani</td></tr>
+    <tr><td><code>hi</code></td><td>Hindi</td></tr>
+    <tr><td><code>hr</code></td><td>Croatian</td></tr>
+    <tr><td><code>hu</code></td><td>Hungarian</td></tr>
+    <tr><td><code>id</code></td><td>Indonesian</td></tr>
+    <tr><td><code>inh</code></td><td>Ingush</td></tr>
+    <tr><td><code>is</code></td><td>Icelandic</td></tr>
+    <tr><td><code>it</code></td><td>Italian</td></tr>
+    <tr><td><code>japan</code></td><td>Japanese</td></tr>
+    <tr><td><code>ka</code></td><td>Georgian</td></tr>
+    <tr><td><code>kbd</code></td><td>Kabardian</td></tr>
+    <tr><td><code>korean</code></td><td>Korean</td></tr>
+    <tr><td><code>ku</code></td><td>Kurdish</td></tr>
+    <tr><td><code>la</code></td><td>Latin</td></tr>
+    <tr><td><code>lbe</code></td><td>Lak</td></tr>
+    <tr><td><code>lez</code></td><td>Lezghian</td></tr>
+    <tr><td><code>lt</code></td><td>Lithuanian</td></tr>
+    <tr><td><code>lv</code></td><td>Latvian</td></tr>
+    <tr><td><code>mah</code></td><td>Magahi</td></tr>
+    <tr><td><code>mai</code></td><td>Maithili</td></tr>
+    <tr><td><code>mi</code></td><td>Maori</td></tr>
+    <tr><td><code>mn</code></td><td>Mongolian</td></tr>
+    <tr><td><code>mr</code></td><td>Marathi</td></tr>
+    <tr><td><code>ms</code></td><td>Malay</td></tr>
+    <tr><td><code>mt</code></td><td>Maltese</td></tr>
+    <tr><td><code>ne</code></td><td>Nepali</td></tr>
+    <tr><td><code>new</code></td><td>Newari</td></tr>
+    <tr><td><code>nl</code></td><td>Dutch</td></tr>
+    <tr><td><code>no</code></td><td>Norwegian</td></tr>
+    <tr><td><code>oc</code></td><td>Occitan</td></tr>
+    <tr><td><code>pi</code></td><td>Pali</td></tr>
+    <tr><td><code>pl</code></td><td>Polish</td></tr>
+    <tr><td><code>pt</code></td><td>Portuguese</td></tr>
+    <tr><td><code>ro</code></td><td>Romanian</td></tr>
+    <tr><td><code>rs_cyrillic</code></td><td>Serbian (Cyrillic)</td></tr>
+    <tr><td><code>rs_latin</code></td><td>Serbian (Latin)</td></tr>
+    <tr><td><code>ru</code></td><td>Russian</td></tr>
+    <tr><td><code>sa</code></td><td>Sanskrit</td></tr>
+    <tr><td><code>sck</code></td><td>Sadri</td></tr>
+    <tr><td><code>sk</code></td><td>Slovak</td></tr>
+    <tr><td><code>sl</code></td><td>Slovenian</td></tr>
+    <tr><td><code>sq</code></td><td>Albanian</td></tr>
+    <tr><td><code>sv</code></td><td>Swedish</td></tr>
+    <tr><td><code>sw</code></td><td>Swahili</td></tr>
+    <tr><td><code>tab</code></td><td>Tabassaran</td></tr>
+    <tr><td><code>ta</code></td><td>Tamil</td></tr>
+    <tr><td><code>te</code></td><td>Telugu</td></tr>
+    <tr><td><code>tl</code></td><td>Tagalog</td></tr>
+    <tr><td><code>tr</code></td><td>Turkish</td></tr>
+    <tr><td><code>ug</code></td><td>Uyghur</td></tr>
+    <tr><td><code>uk</code></td><td>Ukrainian</td></tr>
+    <tr><td><code>ur</code></td><td>Urdu</td></tr>
+    <tr><td><code>uz</code></td><td>Uzbek</td></tr>
+    <tr><td><code>vi</code></td><td>Vietnamese</td></tr>
+  </tbody>
+</table>
+
+</details>
+
+<details><summary><b>Correspondence Between OCR Model Versions and Supported Languages</b></summary>
+
+<table border="1" cellspacing="0" cellpadding="4">
+  <thead>
+    <tr>
+      <th><code>ocr_version</code></th>
+      <th>Supported <code>lang</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>PP-OCRv5</code></td>
+      <td><code>ch</code>, <code>chinese_cht</code>, <code>en</code>, <code>japan</code></td>
+    </tr>
+    <tr>
+      <td><code>PP-OCRv4</code></td>
+      <td><code>ch</code>, <code>en</code></td>
+    </tr>
+    <tr>
+      <td><code>PP-OCRv3</code></td>
+      <td>
+        <code>abq</code>, <code>af</code>, <code>ady</code>, <code>ang</code>, <code>ar</code>, <code>ava</code>, <code>az</code>, <code>be</code>,
+        <code>bg</code>, <code>bgc</code>, <code>bh</code>, <code>bho</code>, <code>bs</code>, <code>ch</code>, <code>che</code>,
+        <code>chinese_cht</code>, <code>cs</code>, <code>cy</code>, <code>da</code>, <code>dar</code>, <code>de</code>, <code>german</code>,
+        <code>en</code>, <code>es</code>, <code>et</code>, <code>fa</code>, <code>fr</code>, <code>french</code>, <code>ga</code>, <code>gom</code>,
+        <code>hi</code>, <code>hr</code>, <code>hu</code>, <code>id</code>, <code>inh</code>, <code>is</code>, <code>it</code>, <code>japan</code>,
+        <code>ka</code>, <code>kbd</code>, <code>korean</code>, <code>ku</code>, <code>la</code>, <code>lbe</code>, <code>lez</code>, <code>lt</code>,
+        <code>lv</code>, <code>mah</code>, <code>mai</code>, <code>mi</code>, <code>mn</code>, <code>mr</code>, <code>ms</code>, <code>mt</code>,
+        <code>ne</code>, <code>new</code>, <code>nl</code>, <code>no</code>, <code>oc</code>, <code>pi</code>, <code>pl</code>, <code>pt</code>,
+        <code>ro</code>, <code>rs_cyrillic</code>, <code>rs_latin</code>, <code>ru</code>, <code>sa</code>, <code>sck</code>, <code>sk</code>,
+        <code>sl</code>, <code>sq</code>, <code>sv</code>, <code>sw</code>, <code>ta</code>, <code>tab</code>, <code>te</code>, <code>tl</code>,
+        <code>tr</code>, <code>ug</code>, <code>uk</code>, <code>ur</code>, <code>uz</code>, <code>vi</code>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+</details>

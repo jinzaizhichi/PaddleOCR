@@ -151,7 +151,7 @@ paddleocr doc_preprocessor -i ./doc_test_rotated.jpg --device gpu
 <tr>
 <td><code>input</code></td>
 <td>The data to be predicted. This parameter is required.
-For example, the local path of an image file or PDF file: <code>/root/data/img.jpg</code>; <b>or a URL link</b>, such as the network URL of an image file or PDF file: <a href="https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/general_doc_preprocessor_002.png">example</a>; <b>or a local directory</b>, which should contain the images to be predicted, such as the local path: <code>/root/data/</code> (currently does not support prediction of PDF files in directories; PDF files need to be specified to a specific file path).
+For example, the local path of an image file or PDF file: <code>/root/data/img.jpg</code>; <b>or a URL link</b>, such as the network URL of an image file or PDF file: <a href="https://paddle-model-ecology.bj.bcebos.com/paddlex/demo_image/doc_test_rotated.jpg">example</a>; <b>or a local directory</b>, which should contain the images to be predicted, such as the local path: <code>/root/data/</code> (currently does not support prediction of PDF files in directories; PDF files need to be specified to a specific file path).
 </td>
 <td><code>str</code></td>
 <td></td>
@@ -200,7 +200,7 @@ For example, the local path of an image file or PDF file: <code>/root/data/img.j
 </tr>
 <tr>
 <td><code>device</code></td>
-<td>The device used for inference. Support for specifying specific card numbers.
+<td>The device used for inference. Support for specifying specific card numbers:
 <ul>
 <li><b>CPU</b>: For example, <code>cpu</code> indicates using the CPU for inference;</li>
 <li><b>GPU</b>: For example, <code>gpu:0</code> indicates using the first GPU for inference;</li>
@@ -222,15 +222,12 @@ If not set, the pipeline initialized value for this parameter will be used. Duri
 </tr>
 <tr>
 <td><code>use_tensorrt</code></td>
-<td>Whether to use TensorRT for inference acceleration.</td>
+<td>Whether to use the Paddle Inference TensorRT subgraph engine.</br>
+For Paddle with CUDA version 11.8, the compatible TensorRT version is 8.x (x>=6), and it is recommended to install TensorRT 8.6.1.6.</br>
+For Paddle with CUDA version 12.6, the compatible TensorRT version is 10.x (x>=5), and it is recommended to install TensorRT 10.5.0.18.
+</td>
 <td><code>bool</code></td>
 <td><code>False</code></td>
-</tr>
-<tr>
-<td><code>min_subgraph_size</code></td>
-<td>The minimum subgraph size, used to optimize the computation of model subgraphs.</td>
-<td><code>int</code></td>
-<td><code>3</code></td>
 </tr>
 <tr>
 <td><code>precision</code></td>
@@ -240,9 +237,17 @@ If not set, the pipeline initialized value for this parameter will be used. Duri
 </tr>
 <tr>
 <td><code>enable_mkldnn</code></td>
-<td>Whether to enable the MKL-DNN acceleration library.</td>
+<td>Whether to enable MKL-DNN acceleration for inference. If MKL-DNN is unavailable or the model does not support it, acceleration will not be used even if this flag is set.</td>
 <td><code>bool</code></td>
 <td><code>True</code></td>
+</tr>
+<tr>
+<td><code>mkldnn_cache_capacity</code></td>
+<td>
+MKL-DNN cache capacity.
+</td>
+<td><code>int</code></td>
+<td><code>10</code></td>
 </tr>
 <tr>
 <td><code>cpu_threads</code></td>
@@ -341,7 +346,7 @@ In the above Python script, the following steps are executed:
 </tr>
 <tr>
 <td><code>device</code></td>
-<td>The device used for inference. Support for specifying specific card numbers.
+<td>The device used for inference. Support for specifying specific card numbers:
 <ul>
 <li><b>CPU</b>: For example, <code>cpu</code> indicates using the CPU for inference;</li>
 <li><b>GPU</b>: For example, <code>gpu:0</code> indicates using the first GPU for inference;</li>
@@ -363,15 +368,12 @@ In the above Python script, the following steps are executed:
 </tr>
 <tr>
 <td><code>use_tensorrt</code></td>
-<td>Whether to use TensorRT for inference acceleration.</td>
+<td>Whether to use the Paddle Inference TensorRT subgraph engine.</br>
+For Paddle with CUDA version 11.8, the compatible TensorRT version is 8.x (x>=6), and it is recommended to install TensorRT 8.6.1.6.</br>
+For Paddle with CUDA version 12.6, the compatible TensorRT version is 10.x (x>=5), and it is recommended to install TensorRT 10.5.0.18.
+</td>
 <td><code>bool</code></td>
 <td><code>False</code></td>
-</tr>
-<tr>
-<td><code>min_subgraph_size</code></td>
-<td>The minimum subgraph size, used to optimize the computation of model subgraphs.</td>
-<td><code>int</code></td>
-<td><code>3</code></td>
 </tr>
 <tr>
 <td><code>precision</code></td>
@@ -381,9 +383,17 @@ In the above Python script, the following steps are executed:
 </tr>
 <tr>
 <td><code>enable_mkldnn</code></td>
-<td>Whether to enable the MKL-DNN acceleration library.</td>
+<td>Whether to enable MKL-DNN acceleration for inference. If MKL-DNN is unavailable or the model does not support it, acceleration will not be used even if this flag is set.</td>
 <td><code>bool</code></td>
 <td><code>True</code></td>
+</tr>
+<tr>
+<td><code>mkldnn_cache_capacity</code></td>
+<td>
+MKL-DNN cache capacity.
+</td>
+<td><code>int</code></td>
+<td><code>10</code></td>
 </tr>
 <tr>
 <td><code>cpu_threads</code></td>
@@ -420,7 +430,7 @@ The following are the parameters and their descriptions of the `predict()` metho
 <td>The data to be predicted, supporting multiple input types. This parameter is required.
 <ul>
 <li><b>Python Var</b>: For example, image data represented as <code>numpy.ndarray</code>;</li>
-<li><b>str</b>: For example, the local path of an image file or PDF file: <code>/root/data/img.jpg</code>; <b>or a URL link</b>, such as the network URL of an image file or PDF file: <a href="https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/general_doc_preprocessor_002.png">example</a>; <b>or a local directory</b>, which should contain the images to be predicted, such as the local path: <code>/root/data/</code> (currently does not support prediction of PDF files in directories; PDF files need to be specified to a specific file path);</li>
+<li><b>str</b>: For example, the local path of an image file or PDF file: <code>/root/data/img.jpg</code>; <b>or a URL link</b>, such as the network URL of an image file or PDF file: <a href="https://paddle-model-ecology.bj.bcebos.com/paddlex/demo_image/doc_test_rotated.jpg">example</a>; <b>or a local directory</b>, which should contain the images to be predicted, such as the local path: <code>/root/data/</code> (currently does not support prediction of PDF files in directories; PDF files need to be specified to a specific file path);</li>
 <li><b>List</b>: The list elements should be of the above types, such as <code>[numpy.ndarray, numpy.ndarray]</code>, <code>["/root/data/img1.jpg", "/root/data/img2.jpg"]</code>, <code>["/root/data1", "/root/data2"]</code>.</li>
 </ul>
 </td>
@@ -516,7 +526,7 @@ The following are the parameters and their descriptions of the `predict()` metho
         - `use_doc_orientation_classify`: `(bool)` Controls whether to enable the document orientation classification module
         - `use_doc_unwarping`: `(bool)` Controls whether to enable the text image rectification module
 
-    - `angle`: `(int)` The prediction result of the document orientation classification. When enabled, the value is one of [0, 90, 180, 270]; when disabled, it is -1
+    - `angle`: `(int)` The prediction result of the document orientation classification. When enabled, the value is one of [0,90,180,270]; when disabled, it is -1
 
 - Calling the `save_to_json()` method will save the above content to the specified `save_path`. If a directory is specified, the saved path will be `save_path/{your_img_basename}.json`. If a file is specified, it will be saved directly to that file. Since JSON files do not support saving numpy arrays, `numpy.array` types will be converted to list form.
 

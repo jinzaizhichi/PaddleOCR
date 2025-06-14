@@ -2,7 +2,7 @@
 comments: true
 ---
 
-# General OCR Pipeline Usage Guide
+# General OCR Pipeline Usage Tutorial
 
 ## 1. OCR Pipeline Introduction
 
@@ -663,25 +663,25 @@ paddleocr ocr -i ./general_ocr_002.png --ocr_version PP-OCRv4
 </tr>
 <tr>
 <td><code>use_doc_orientation_classify</code></td>
-<td>Whether to load and use the document orientation classification function. If not set, the pipeline's initialized value for this parameter (initialized to <code>True</code>) will be used.</td>
+<td>Whether to load and use the document orientation classification module. If not set, the pipeline's initialized value for this parameter (initialized to <code>True</code>) will be used.</td>
 <td><code>bool</code></td>
 <td></td>
 </tr>
 <tr>
 <td><code>use_doc_unwarping</code></td>
-<td>Whether to load and use the text image unwarping function. If not set, the pipeline's initialized value for this parameter (initialized to <code>True</code>) will be used.</td>
+<td>Whether to load and use the text image unwarping module. If not set, the pipeline's initialized value for this parameter (initialized to <code>True</code>) will be used.</td>
 <td><code>bool</code></td>
 <td></td>
 </tr>
 <tr>
 <td><code>use_textline_orientation</code></td>
-<td>Whether to load and use the text line orientation function. If not set, the pipeline's initialized value for this parameter (initialized to <code>True</code>) will be used.</td>
+<td>Whether to load and use the text line orientation module. If not set, the pipeline's initialized value for this parameter (initialized to <code>True</code>) will be used.</td>
 <td><code>bool</code></td>
 <td></td>
 </tr>
 <tr>
 <td><code>text_det_limit_side_len</code></td>
-<td>Maximum side length limit for text detection.
+<td>Image side length limitation for text detection.
 Any integer greater than <code>0</code>. If not set, the pipeline's initialized value for this parameter (initialized to <code>64</code>) will be used.
 </td>
 <td><code>int</code></td>
@@ -740,30 +740,21 @@ Any floating-point number greater than <code>0</code>. If not set, the pipeline'
 </tr>
 <tr>
 <td><code>lang</code></td>
-<td>OCR model for a specified language.
-<ul>
-<li><b>ch</b>: Chinese;
-<li><b>en</b>: English;
-<li><b>korean</b>: Korean;
-<li><b>japan</b>: Japanese;
-<li><b>chinese_cht</b>: Traditional Chinese;
-<li><b>te</b>: Telugu;
-<li><b>ka</b>: Kannada;
-<li><b>ta</b>: Tamil;
-</ul>If not set, <code>ch</code> will be used by default.
-
+<td>OCR model language to use.
+The table in the appendix lists all the supported languages.
 </td>
 <td><code>str</code></td>
 <td></td>
 </tr>
 <tr>
 <td><code>ocr_version</code></td>
-<td>OCR version.
+<td>Version of OCR models.
 <ul>
-<li><b>PP-OCRv5</b>: Use <code>PP-OCRv5</code> series models;
-<li><b>PP-OCRv4</b>: Use <code>PP-OCRv4</code> series models;
-<li><b>PP-OCRv3</b>: Use <code>PP-OCRv3</code> series models;
-</ul>If not set, <code>PP-OCRv5</code> series models will be used by default.
+<li><b>PP-OCRv5</b>: Use PP-OCRv5 series models;
+<li><b>PP-OCRv4</b>: Use PP-OCRv4 series models;
+<li><b>PP-OCRv3</b>: Use PP-OCRv3 series models.</li>
+</ul>
+Please note that not every <code>ocr_version</code> supports all <code>lang</code> options. Please refer to the correspondence table in the appendix for details.
 </td>
 <td><code>str</code></td>
 <td></td>
@@ -840,7 +831,7 @@ Any floating-point number greater than <code>0</code>. If not set, the pipeline'
 </tr>
 <tr>
 <td><code>device</code></td>
-<td>Device for inference. Supports specifying a specific card number.
+<td>Device for inference. Supports specifying a specific card number:
 <ul>
 <li><b>CPU</b>: <code>cpu</code> indicates using CPU for inference;</li>
 <li><b>GPU</b>: <code>gpu:0</code> indicates using the 1st GPU for inference;</li>
@@ -861,15 +852,12 @@ Any floating-point number greater than <code>0</code>. If not set, the pipeline'
 </tr>
 <tr>
 <td><code>use_tensorrt</code></td>
-<td>Whether to use TensorRT for inference acceleration.</td>
+<td>Whether to use the Paddle Inference TensorRT subgraph engine.</br>
+For Paddle with CUDA version 11.8, the compatible TensorRT version is 8.x (x>=6), and it is recommended to install TensorRT 8.6.1.6.</br>
+For Paddle with CUDA version 12.6, the compatible TensorRT version is 10.x (x>=5), and it is recommended to install TensorRT 10.5.0.18.
+</td>
 <td><code>bool</code></td>
 <td><code>False</code></td>
-</tr>
-<tr>
-<td><code>min_subgraph_size</code></td>
-<td>Minimum subgraph size for optimizing model subgraph computation.</td>
-<td><code>int</code></td>
-<td><code>3</code></td>
 </tr>
 <tr>
 <td><code>precision</code></td>
@@ -879,10 +867,18 @@ Any floating-point number greater than <code>0</code>. If not set, the pipeline'
 </tr>
 <tr>
 <td><code>enable_mkldnn</code></td>
-<td>Whether to enable the MKL-DNN acceleration library.
+<td>Whether to enable MKL-DNN acceleration for inference. If MKL-DNN is unavailable or the model does not support it, acceleration will not be used even if this flag is set.
 </td>
 <td><code>bool</code></td>
 <td><code>True</code></td>
+</tr>
+<tr>
+<td><code>mkldnn_cache_capacity</code></td>
+<td>
+MKL-DNN cache capacity.
+</td>
+<td><code>int</code></td>
+<td><code>10</code></td>
 </tr>
 <tr>
 <td><code>cpu_threads</code></td>
@@ -1046,25 +1042,25 @@ In the above Python script, the following steps are performed:
  </tr>
  <tr>
  <td><code>use_doc_orientation_classify</code></td>
- <td>Whether to load and use the document orientation classification function. If set to <code>None</code>, the pipeline's initialized value for this parameter (initialized to <code>True</code>) will be used.</td>
+ <td>Whether to load and use the document orientation classification module. If set to <code>None</code>, the pipeline's initialized value for this parameter (initialized to <code>True</code>) will be used.</td>
  <td><code>bool</code></td>
  <td><code>None</code></td>
  </tr>
  <tr>
  <td><code>use_doc_unwarping</code></td>
- <td>Whether to load and use the text image unwarping function. If set to <code>None</code>, the pipeline's initialized value for this parameter (initialized to <code>True</code>) will be used.</td>
+ <td>Whether to load and use the text image unwarping module. If set to <code>None</code>, the pipeline's initialized value for this parameter (initialized to <code>True</code>) will be used.</td>
  <td><code>bool</code></td>
  <td><code>None</code></td>
  </tr>
  <tr>
  <td><code>use_textline_orientation</code></td>
- <td>Whether to load and use the text line orientation function. If set to <code>None</code>, the pipeline's initialized value for this parameter (initialized to <code>True</code>) will be used.</td>
+ <td>Whether to load and use the text line orientation module. If set to <code>None</code>, the pipeline's initialized value for this parameter (initialized to <code>True</code>) will be used.</td>
  <td><code>bool</code></td>
  <td><code>None</code></td>
  </tr>
  <tr>
  <td><code>text_det_limit_side_len</code></td>
- <td>Maximum side length limit for text detection.
+ <td>Image side length limitation for text detection.
  <ul>
  <li><b>int</b>: Any integer greater than <code>0</code>;</li>
  <li><b>None</b>: If set to <code>None</code>, the pipeline's initialized value for this parameter (initialized to <code>64</code>) will be used.</li>
@@ -1139,37 +1135,27 @@ In the above Python script, the following steps are performed:
 <tr>
 <td><code>lang</code></td>
 <td>OCR model language to use.
-<ul>
-<li><b>ch</b>: Chinese;</li>
-<li><b>en</b>: English;</li>
-<li><b>korean</b>: Korean;</li>
-<li><b>japan</b>: Japanese;</li>
-<li><b>chinese_cht</b>: Traditional Chinese;</li>
-<li><b>te</b>: Telugu;</li>
-<li><b>ka</b>: Kannada;</li>
-<li><b>ta</b>: Tamil;</li>
-<li><b>None</b>: If set to <code>None</code>, <code>ch</code> will be used by default.</li>
-</ul>
+The table in the appendix lists all the supported languages.
 </td>
 <td><code>str</code></td>
 <td><code>None</code></td>
 </tr>
 <tr>
 <td><code>ocr_version</code></td>
-<td>OCR version.
+<td>Version of OCR models.
 <ul>
-<li><b>PP-OCRv5</b>: Use <code>PP-OCRv5</code> series models;</li>
-<li><b>PP-OCRv4</b>: Use <code>PP-OCRv4</code> series models;</li>
-<li><b>PP-OCRv3</b>: Use <code>PP-OCRv3</code> series models;</li>
-<li><b>None</b>: If set to <code>None</code>, <code>PP-OCRv5</code> series models will be used by default.</li>
+<li><b>PP-OCRv5</b>: Use PP-OCRv5 series models;</li>
+<li><b>PP-OCRv4</b>: Use PP-OCRv4 series models;</li>
+<li><b>PP-OCRv3</b>: Use PP-OCRv3 series models.</li>
 </ul>
+Please note that not every <code>ocr_version</code> supports all <code>lang</code> options. Please refer to the correspondence table in the appendix for details.
 </td>
 <td><code>str</code></td>
 <td><code>None</code></td>
 </tr>
 <tr>
 <td><code>device</code></td>
-<td>Device for inference. Supports specifying a specific card number.
+<td>Device for inference. Supports specifying a specific card number:
 <ul>
 <li><b>CPU</b>: e.g., <code>cpu</code> for CPU inference;</li>
 <li><b>GPU</b>: e.g., <code>gpu:0</code> for inference on the 1st GPU;</li>
@@ -1191,15 +1177,12 @@ In the above Python script, the following steps are performed:
 </tr>
 <tr>
 <td><code>use_tensorrt</code></td>
-<td>Whether to use TensorRT for inference acceleration.</td>
+<td>Whether to use the Paddle Inference TensorRT subgraph engine.</br>
+For Paddle with CUDA version 11.8, the compatible TensorRT version is 8.x (x>=6), and it is recommended to install TensorRT 8.6.1.6.</br>
+For Paddle with CUDA version 12.6, the compatible TensorRT version is 10.x (x>=5), and it is recommended to install TensorRT 10.5.0.18.
+</td>
 <td><code>bool</code></td>
 <td><code>False</code></td>
-</tr>
-<tr>
-<td><code>min_subgraph_size</code></td>
-<td>Minimum subgraph size for optimizing subgraph computation.</td>
-<td><code>int</code></td>
-<td><code>3</code></td>
 </tr>
 <tr>
 <td><code>precision</code></td>
@@ -1209,9 +1192,17 @@ In the above Python script, the following steps are performed:
 </tr>
 <tr>
 <td><code>enable_mkldnn</code></td>
-<td>Whether to enable the MKL-DNN acceleration library.</td>
+<td>Whether to enable MKL-DNN acceleration for inference. If MKL-DNN is unavailable or the model does not support it, acceleration will not be used even if this flag is set.</td>
 <td><code>bool</code></td>
 <td><code>True</code></td>
+</tr>
+<tr>
+<td><code>mkldnn_cache_capacity</code></td>
+<td>
+MKL-DNN cache capacity.
+</td>
+<td><code>int</code></td>
+<td><code>10</code></td>
 </tr>
 <tr>
 <td><code>cpu_threads</code></td>
@@ -1369,16 +1360,16 @@ In the above Python script, the following steps are performed:
         <ul>
             <li><code>input_path</code>: <code>(str)</code> Input path of the image to be predicted</li>
             <li><code>page_index</code>: <code>(Union[int, None])</code> If the input is a PDF file, it indicates which page of the PDF it is; otherwise, it is <code>None</code></li>
-            <li><code>model_settings</code>: <code>(Dict[str, bool])</code> Model parameters configured for the production line
+            <li><code>model_settings</code>: <code>(Dict[str, bool])</code> Model parameters configured for the pipeline
                 <ul>
-                    <li><code>use_doc_preprocessor</code>: <code>(bool)</code> Control whether to enable the document preprocessing sub-production line</li>
+                    <li><code>use_doc_preprocessor</code>: <code>(bool)</code> Control whether to enable the document preprocessing sub-pipeline</li>
                     <li><code>use_textline_orientation</code>: <code>(bool)</code> Control whether to enable the text line orientation classification function</li>
                 </ul>
             </li>
-            <li><code>doc_preprocessor_res</code>: <code>(Dict[str, Union[str, Dict[str, bool], int]])</code> Output results of the document preprocessing sub-production line. Only exists when <code>use_doc_preprocessor=True</code>
+            <li><code>doc_preprocessor_res</code>: <code>(Dict[str, Union[str, Dict[str, bool], int]])</code> Output results of the document preprocessing sub-pipeline. Only exists when <code>use_doc_preprocessor=True</code>
                 <ul>
-                    <li><code>input_path</code>: <code>(Union[str, None])</code> Image path accepted by the image preprocessing sub-production line. When the input is <code>numpy.ndarray</code>, it is saved as <code>None</code></li>
-                    <li><code>model_settings</code>: <code>(Dict)</code> Model configuration parameters of the preprocessing sub-production line
+                    <li><code>input_path</code>: <code>(Union[str, None])</code> Image path accepted by the image preprocessing sub-pipeline. When the input is <code>numpy.ndarray</code>, it is saved as <code>None</code></li>
+                    <li><code>model_settings</code>: <code>(Dict)</code> Model configuration parameters of the preprocessing sub-pipeline
                         <ul>
                             <li><code>use_doc_orientation_classify</code>: <code>(bool)</code> Control whether to enable document orientation classification</li>
                             <li><code>use_doc_unwarping</code>: <code>(bool)</code> Control whether to enable text image unwarping</li>
@@ -1408,7 +1399,7 @@ In the above Python script, the following steps are performed:
         </ul>
     </li>
     <li>Calling the <code>save_to_json()</code> method will save the above content to the specified <code>save_path</code>. If a directory is specified, the save path will be <code>save_path/{your_img_basename}_res.json</code>. If a file is specified, it will be saved directly to that file. Since json files do not support saving numpy arrays, <code>numpy.array</code> types will be converted to list form.</li>
-    <li>Calling the <code>save_to_img()</code> method will save the visualization results to the specified <code>save_path</code>. If a directory is specified, the save path will be <code>save_path/{your_img_basename}_ocr_res_img.{your_img_extension}</code>. If a file is specified, it will be saved directly to that file. (The production line usually generates many result images, so it is not recommended to directly specify a specific file path, as multiple images will be overwritten, leaving only the last one.)</li>
+    <li>Calling the <code>save_to_img()</code> method will save the visualization results to the specified <code>save_path</code>. If a directory is specified, the save path will be <code>save_path/{your_img_basename}_ocr_res_img.{your_img_extension}</code>. If a file is specified, it will be saved directly to that file. (The pipeline usually generates many result images, so it is not recommended to directly specify a specific file path, as multiple images will be overwritten, leaving only the last one.)</li>
 </ul>
 
 <p>Additionally, you can also obtain the visualized image with results and prediction results through attributes, as follows:</p>
@@ -1745,11 +1736,11 @@ The general OCR pipeline consists of multiple modules. If the pipeline's perform
 
 ### 4.2 Model Deployment  
 
-After you complete fine-tuning training using a private dataset, you can obtain a local model weight file. You can then use the fine-tuned model weights by specifying the local model save path through parameters or by customizing the production line configuration file.
+After you complete fine-tuning training using a private dataset, you can obtain a local model weight file. You can then use the fine-tuned model weights by specifying the local model save path through parameters or by customizing the pipeline configuration file.
 
 #### 4.2.1 Specify the local model path through parameters
 
-When initializing the production line object, specify the local model path through parameters. Take the usage of the weights after fine-tuning the text detection model as an example, as follows:
+When initializing the pipeline object, specify the local model path through parameters. Take the usage of the weights after fine-tuning the text detection model as an example, as follows:
 
 Command line mode:
 
@@ -1777,7 +1768,7 @@ pipeline = PaddleOCR(text_detection_model_dir="./your_det_model_path")
 
 #### 4.2.2 Specify the local model path through the configuration file
 
-1.Obtain the production line configuration file
+1.Obtain the pipeline configuration file
 
 Call the `export_paddlex_config_to_yaml` method of the **General OCR Pipeline** object in PaddleOCR to export the current pipeline configuration as a YAML file:  
 
@@ -1838,3 +1829,139 @@ from paddleocr import PaddleOCR
 
 pipeline = PaddleOCR(paddlex_config="PaddleOCR.yaml")  
 ```
+
+## 5. Appendix
+
+<details><summary><b>Supported Languages</b></summary>
+
+<table border="1" cellspacing="0" cellpadding="4">
+  <thead>
+    <tr>
+      <th><code>lang</code></th>
+      <th>Language Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>abq</code></td><td>Abaza</td></tr>
+    <tr><td><code>af</code></td><td>Afrikaans</td></tr>
+    <tr><td><code>ang</code></td><td>Old English</td></tr>
+    <tr><td><code>ar</code></td><td>Arabic</td></tr>
+    <tr><td><code>ava</code></td><td>Avaric</td></tr>
+    <tr><td><code>az</code></td><td>Azerbaijani</td></tr>
+    <tr><td><code>be</code></td><td>Belarusian</td></tr>
+    <tr><td><code>bg</code></td><td>Bulgarian</td></tr>
+    <tr><td><code>bgc</code></td><td>Haryanvi</td></tr>
+    <tr><td><code>bh</code></td><td>Bihari</td></tr>
+    <tr><td><code>bho</code></td><td>Bhojpuri</td></tr>
+    <tr><td><code>bs</code></td><td>Bosnian</td></tr>
+    <tr><td><code>ch</code></td><td>Chinese (Simplified)</td></tr>
+    <tr><td><code>che</code></td><td>Chechen</td></tr>
+    <tr><td><code>chinese_cht</code></td><td>Chinese (Traditional)</td></tr>
+    <tr><td><code>cs</code></td><td>Czech</td></tr>
+    <tr><td><code>cy</code></td><td>Welsh</td></tr>
+    <tr><td><code>da</code></td><td>Danish</td></tr>
+    <tr><td><code>dar</code></td><td>Dargwa</td></tr>
+    <tr><td><code>de</code> or <code>german</code></td><td>German</td></tr>
+    <tr><td><code>en</code></td><td>English</td></tr>
+    <tr><td><code>es</code></td><td>Spanish</td></tr>
+    <tr><td><code>et</code></td><td>Estonian</td></tr>
+    <tr><td><code>fa</code></td><td>Persian</td></tr>
+    <tr><td><code>fr</code> or <code>french</code></td><td>French</td></tr>
+    <tr><td><code>ga</code></td><td>Irish</td></tr>
+    <tr><td><code>gom</code></td><td>Konkani</td></tr>
+    <tr><td><code>hi</code></td><td>Hindi</td></tr>
+    <tr><td><code>hr</code></td><td>Croatian</td></tr>
+    <tr><td><code>hu</code></td><td>Hungarian</td></tr>
+    <tr><td><code>id</code></td><td>Indonesian</td></tr>
+    <tr><td><code>inh</code></td><td>Ingush</td></tr>
+    <tr><td><code>is</code></td><td>Icelandic</td></tr>
+    <tr><td><code>it</code></td><td>Italian</td></tr>
+    <tr><td><code>japan</code></td><td>Japanese</td></tr>
+    <tr><td><code>ka</code></td><td>Georgian</td></tr>
+    <tr><td><code>kbd</code></td><td>Kabardian</td></tr>
+    <tr><td><code>korean</code></td><td>Korean</td></tr>
+    <tr><td><code>ku</code></td><td>Kurdish</td></tr>
+    <tr><td><code>la</code></td><td>Latin</td></tr>
+    <tr><td><code>lbe</code></td><td>Lak</td></tr>
+    <tr><td><code>lez</code></td><td>Lezghian</td></tr>
+    <tr><td><code>lt</code></td><td>Lithuanian</td></tr>
+    <tr><td><code>lv</code></td><td>Latvian</td></tr>
+    <tr><td><code>mah</code></td><td>Magahi</td></tr>
+    <tr><td><code>mai</code></td><td>Maithili</td></tr>
+    <tr><td><code>mi</code></td><td>Maori</td></tr>
+    <tr><td><code>mn</code></td><td>Mongolian</td></tr>
+    <tr><td><code>mr</code></td><td>Marathi</td></tr>
+    <tr><td><code>ms</code></td><td>Malay</td></tr>
+    <tr><td><code>mt</code></td><td>Maltese</td></tr>
+    <tr><td><code>ne</code></td><td>Nepali</td></tr>
+    <tr><td><code>new</code></td><td>Newari</td></tr>
+    <tr><td><code>nl</code></td><td>Dutch</td></tr>
+    <tr><td><code>no</code></td><td>Norwegian</td></tr>
+    <tr><td><code>oc</code></td><td>Occitan</td></tr>
+    <tr><td><code>pi</code></td><td>Pali</td></tr>
+    <tr><td><code>pl</code></td><td>Polish</td></tr>
+    <tr><td><code>pt</code></td><td>Portuguese</td></tr>
+    <tr><td><code>ro</code></td><td>Romanian</td></tr>
+    <tr><td><code>rs_cyrillic</code></td><td>Serbian (Cyrillic)</td></tr>
+    <tr><td><code>rs_latin</code></td><td>Serbian (Latin)</td></tr>
+    <tr><td><code>ru</code></td><td>Russian</td></tr>
+    <tr><td><code>sa</code></td><td>Sanskrit</td></tr>
+    <tr><td><code>sck</code></td><td>Sadri</td></tr>
+    <tr><td><code>sk</code></td><td>Slovak</td></tr>
+    <tr><td><code>sl</code></td><td>Slovenian</td></tr>
+    <tr><td><code>sq</code></td><td>Albanian</td></tr>
+    <tr><td><code>sv</code></td><td>Swedish</td></tr>
+    <tr><td><code>sw</code></td><td>Swahili</td></tr>
+    <tr><td><code>tab</code></td><td>Tabassaran</td></tr>
+    <tr><td><code>ta</code></td><td>Tamil</td></tr>
+    <tr><td><code>te</code></td><td>Telugu</td></tr>
+    <tr><td><code>tl</code></td><td>Tagalog</td></tr>
+    <tr><td><code>tr</code></td><td>Turkish</td></tr>
+    <tr><td><code>ug</code></td><td>Uyghur</td></tr>
+    <tr><td><code>uk</code></td><td>Ukrainian</td></tr>
+    <tr><td><code>ur</code></td><td>Urdu</td></tr>
+    <tr><td><code>uz</code></td><td>Uzbek</td></tr>
+    <tr><td><code>vi</code></td><td>Vietnamese</td></tr>
+  </tbody>
+</table>
+
+</details>
+
+<details><summary><b>Correspondence Between OCR Model Versions and Supported Languages</b></summary>
+
+<table border="1" cellspacing="0" cellpadding="4">
+  <thead>
+    <tr>
+      <th><code>ocr_version</code></th>
+      <th>Supported <code>lang</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>PP-OCRv5</code></td>
+      <td><code>ch</code>, <code>chinese_cht</code>, <code>en</code>, <code>japan</code></td>
+    </tr>
+    <tr>
+      <td><code>PP-OCRv4</code></td>
+      <td><code>ch</code>, <code>en</code></td>
+    </tr>
+    <tr>
+      <td><code>PP-OCRv3</code></td>
+      <td>
+        <code>abq</code>, <code>af</code>, <code>ady</code>, <code>ang</code>, <code>ar</code>, <code>ava</code>, <code>az</code>, <code>be</code>,
+        <code>bg</code>, <code>bgc</code>, <code>bh</code>, <code>bho</code>, <code>bs</code>, <code>ch</code>, <code>che</code>,
+        <code>chinese_cht</code>, <code>cs</code>, <code>cy</code>, <code>da</code>, <code>dar</code>, <code>de</code>, <code>german</code>,
+        <code>en</code>, <code>es</code>, <code>et</code>, <code>fa</code>, <code>fr</code>, <code>french</code>, <code>ga</code>, <code>gom</code>,
+        <code>hi</code>, <code>hr</code>, <code>hu</code>, <code>id</code>, <code>inh</code>, <code>is</code>, <code>it</code>, <code>japan</code>,
+        <code>ka</code>, <code>kbd</code>, <code>korean</code>, <code>ku</code>, <code>la</code>, <code>lbe</code>, <code>lez</code>, <code>lt</code>,
+        <code>lv</code>, <code>mah</code>, <code>mai</code>, <code>mi</code>, <code>mn</code>, <code>mr</code>, <code>ms</code>, <code>mt</code>,
+        <code>ne</code>, <code>new</code>, <code>nl</code>, <code>no</code>, <code>oc</code>, <code>pi</code>, <code>pl</code>, <code>pt</code>,
+        <code>ro</code>, <code>rs_cyrillic</code>, <code>rs_latin</code>, <code>ru</code>, <code>sa</code>, <code>sck</code>, <code>sk</code>,
+        <code>sl</code>, <code>sq</code>, <code>sv</code>, <code>sw</code>, <code>ta</code>, <code>tab</code>, <code>te</code>, <code>tl</code>,
+        <code>tr</code>, <code>ug</code>, <code>uk</code>, <code>ur</code>, <code>uz</code>, <code>vi</code>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+</details>
